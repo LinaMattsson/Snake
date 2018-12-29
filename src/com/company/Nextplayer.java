@@ -10,58 +10,69 @@ public class Nextplayer {
 
     public static void nextplayer(int player) throws InterruptedException {
         Screen screen = TerminalFacade.createScreen();
+        GameController game = new GameController();
         screen.startScreen();
-        screen.putString(10, 5, "Snake", Terminal.Color.WHITE, Terminal.Color.BLACK);
-        screen.refresh();
+        int steps = 0;
         int x = 30;
         int y = 10;
-        printScreen print = new printScreen();
+        int size = 1;
+        Snake snake = new Snake(new Position(0,0, false));
+        snake.moveSnake(new Position(x,y, false));
+        screen.putString(10, 5, "Snake", Terminal.Color.WHITE, Terminal.Color.BLACK);
+        screen.putString(10, 7, "Scoore" + steps, Terminal.Color.WHITE, Terminal.Color.BLACK);
+        screen.refresh();
 
+        printScreen print = new printScreen();
         boolean keepRunning = true;
         Key key = screen.readInput();
-        while(keepRunning){
+
+        while(keepRunning && game.stillAlive(x,y)){
             while(key == null){
                 key = screen.readInput();
             }
-
-
+                print.isTarget(snake);
             switch(key.getKind()){
                 case Escape:
                     screen.stopScreen();
                     System.exit(0);
                     break;
                 case ArrowRight:
-                        while(key==null || key.getKind()== Key.Kind.ArrowRight || key.getKind()== Key.Kind.ArrowLeft){
-                            x++;
-                            key = print.printscreen(x,y,screen);
-
+                        while(!game.isDead(snake) && game.stillAlive(x,y) && (key==null || key.getKind()== Key.Kind.ArrowRight || key.getKind()== Key.Kind.ArrowLeft)){
+                            x+=2;
+                            snake.moveSnake(new Position(x,y,false));
+                            key = print.printscreen(snake,screen);
                     }
                     break;
                 case ArrowLeft:
-                    while(key==null || key.getKind()== Key.Kind.ArrowRight || key.getKind()== Key.Kind.ArrowLeft){
-                        x--;
-                        key = print.printscreen(x,y,screen);
+                    while(!game.isDead(snake) && game.stillAlive(x,y) && (key==null || key.getKind()== Key.Kind.ArrowRight || key.getKind()== Key.Kind.ArrowLeft)){
+                        x-=2;
+                        snake.moveSnake(new Position(x,y, false));
+                        key = print.printscreen(snake,screen);
                     }
                     break;
                 case ArrowUp:
-                    while(key==null || key.getKind()== Key.Kind.ArrowUp || key.getKind()== Key.Kind.ArrowDown){
+                    while(!game.isDead(snake) && game.stillAlive(x,y) && (key==null || key.getKind()== Key.Kind.ArrowUp || key.getKind()== Key.Kind.ArrowDown)){
                         y--;
-                        key = print.printscreen(x,y,screen);
+                        snake.moveSnake(new Position(x,y, false));
+                        key = print.printscreen(snake,screen);
                     }
                     break;
                 case ArrowDown:
-                    while(key==null || key.getKind()== Key.Kind.ArrowUp || key.getKind()== Key.Kind.ArrowDown){
+                    while(!game.isDead(snake) && game.stillAlive(x,y) && (key==null || key.getKind()== Key.Kind.ArrowUp || key.getKind()== Key.Kind.ArrowDown)){
                         y++;
-                        key = print.printscreen(x,y,screen);
+                        snake.moveSnake(new Position(x,y, false));
+                        key = print.printscreen(snake,screen);
                     }
                     break;
             }
 
             }
-
+        System.out.println("jippi");
+        game.showHighScoore(screen);
+    }
 
         }
 
 
-    }
+
 
